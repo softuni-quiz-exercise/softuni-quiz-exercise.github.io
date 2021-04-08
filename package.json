@@ -1,0 +1,12 @@
+{
+  "name": "quiz-fever",
+  "version": "1.0.0",
+  "description": "Система за създадване, управление, и попълване на тестове със свободен достъп.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
