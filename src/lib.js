@@ -5,10 +5,10 @@ import page from '//unpkg.com/page/page.mjs';
 export {
     html,
     render,
+    until,
     page,
     elemCreator,
     createEmptyArray,
-    until
 }
 
 
