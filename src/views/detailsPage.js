@@ -65,8 +65,6 @@ export async function showDetailsPage(context) {
         if (confirmed) { 
             try {
                 
-                await deleteSolutionByQuizId(quizId);
-                await deleteQuestionsByQuizId(quizId);
                 await deleteQuiz(quizId);
                 context.pageContent.redirect('/browser');
 

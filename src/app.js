@@ -11,12 +11,13 @@ import { showBrowserPage } from './views/browserPage.js';
 import { showDetailsPage } from './views/detailsPage.js';
 import { showContestPage } from './views/contestPage.js';
 import { showSummoryPage } from './views/summoryPage.js';
+import { showProfilePage } from './views/profilePage.js';
 
 
 const main = document.getElementById('content');
 const nav = document.querySelector('nav');
 nav.querySelector('#logoutBtn').addEventListener('click', onLogout);
-nav.querySelector('#profileBtn').href = '/profile/' + sessionStorage.userId;
+// nav.querySelector('#profileBtn').href = '/profile/' + sessionStorage.userId;
 
 /* Router Set-Up */
 page.redirect('/', '/home');
@@ -30,6 +31,7 @@ page('/browser', decorateContext, showBrowserPage);
 page('/details/:id', decorateContext, showDetailsPage);
 page('/contest/:id', decorateContext, showContestPage);
 page('/summory/:id', decorateContext, showSummoryPage);
+page('/profile/:id', decorateContext, showProfilePage);
 
 page.start();
 

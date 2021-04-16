@@ -56,6 +56,11 @@ export async function getSummoryById(summoryId) {
     return await api.getData(url);
 }
 
+export async function getSolutionsByUserId(userId) {
+    let url = endpoints.solutionCollection + `?where={"owner": "${userId}"}`;
+    return (await api.getData(url))['results'];
+}
+
 export async function getQuizTakenTimesById(quizId) {
     let url = endpoints.solutionCollection + `?where={"quiz": "${quizId}"}&count="1"`;
     return (await api.getData(url))['count'];
@@ -74,7 +79,14 @@ export async function getQuestsionByQuizId(quizId) {
     return await api.getData(url);
 }
 
+export async function getQuizesByUserId(ownerId) {
+    // 'where={"post":{"__type":"Pointer","className":"Post","objectId":"<OBJECT_ID>"}}'
+    // let url = endpoints.questionCollection + `?where=` + encodeURIComponent(`{"quiz": ${addPointer('Quiz', quizId)}`);
 
+    // let url = endpoints.quizCollection + `?where={"owner": {"__type":"Pointer","className":"_User","objectId":${ownerId}}}`;
+    let url = endpoints.quizCollection + `?where={"owner": ${JSON.stringify(addPointer("_User", ownerId))}}`;
+    return (await api.getData(url))['results'];
+}
 
 export async function getTheLastQuiz() {
     const quizesCount = await getQuizesCount();
@@ -119,6 +131,8 @@ export async function updateQuiz(quizId, body) {
 }
 
 export async function deleteQuiz(quizId) {
+    await deleteSolutionByQuizId(quizId);
+    await deleteQuestionsByQuizId(quizId);
     return await api.deleteRequest(endpoints.quizCollection + '/' + quizId);
 }
 

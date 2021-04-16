@@ -1,4 +1,4 @@
-import { html } from '../../lib.js';
+import { html, topicConvert } from '../../lib.js';
 
 
 export default function quizTemplate(quizData, takenTimes) { 
@@ -17,11 +17,4 @@ export default function quizTemplate(quizData, takenTimes) {
             </div>
         </div>
     </article>`;
-}
-
-
-const topicConvert = {
-    'it': 'Languages',
-    'hardware': 'Hardware',
-    'software': 'Tools and Software'
 }
