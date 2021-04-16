@@ -29,7 +29,11 @@ const homePageTemplate = (lastQuizData, quizCount, takenTimes) => html`
     <h2>Our most recent quiz:</h2>
 
     <!-- add the most recent quiz here -->
-    ${quizTemplate(lastQuizData, takenTimes)}
+    ${
+        (lastQuizData)
+        ? html`${quizTemplate(lastQuizData, takenTimes)}`
+        : html`No quizes added yet! Be the first!`
+    }
     <div>
         <a class="action cta" href="/browser">Browse all quizes</a>
     </div>
@@ -39,15 +43,24 @@ const homePageTemplate = (lastQuizData, quizCount, takenTimes) => html`
 
 
 export async function showHomePage(context) {
+    let lastQuizData;
+    let quizesCount;
+    let takenTimes;
+
     try {
 
         showLoading();
-        const lastQuizData = await getTheLastQuiz();
-        let quizesCount = await getQuizesCount();
-        let takenTimes = await getQuizTakenTimesById(lastQuizData.objectId);
+        lastQuizData = await getTheLastQuiz();
+        if (lastQuizData) {
+            quizesCount = await getQuizesCount();
+            takenTimes = await getQuizTakenTimesById(lastQuizData.objectId);
+        }
         context.renderContent(homePageTemplate(lastQuizData, quizesCount, takenTimes));
 
-    } catch(error) { alert(error.message); }
+    } catch(error) { 
+        // console.error(error.message);
+        context.renderContent(homePageTemplate(undefined, 0, 0));
+     }
 
     function showLoading() { context.renderContent(loadingElem); }
 }

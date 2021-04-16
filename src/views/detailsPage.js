@@ -1,6 +1,6 @@
 import { html } from '../lib.js';
 
-import { getQuizById, getOwnerById, deleteQuiz, getQuizTakenTimesById } from '../api/data.js';
+import { getQuizById, getOwnerById, deleteQuiz, getQuizTakenTimesById, deleteQuestionsByQuizId, deleteSolutionByQuizId } from '../api/data.js';
 import loadingBlock from './components/loadingBlock.js';
 
 
@@ -42,24 +42,35 @@ const detailsPageTemplate = ({quizData, ownerData, onDelete, takenTimes}) => htm
 
 
 export async function showDetailsPage(context) {
+    let quizId;
+    let quizData;
+    let ownerData;
+    let takenTimes;
+
     try {
         
         showLoading();
-        let quizId = context.params.id;
-        const quizData = (await getQuizById(quizId))['results'][0];
-        const ownerData = (await getOwnerById(quizData.owner.objectId))['results'][0]
-        let takenTimes = await getQuizTakenTimesById(quizId);
+        quizId = context.params.id;
+        quizData = (await getQuizById(quizId))['results'][0];
+        ownerData = (await getOwnerById(quizData.owner.objectId))['results'][0]
+        takenTimes = await getQuizTakenTimesById(quizId);
         context.renderContent(detailsPageTemplate({quizData, ownerData, onDelete, takenTimes}));
 
     } catch(error) { alert(error.message); }
 
     function showLoading() { context.renderContent(loadingElem); }
     
-    function onDelete() {
+    async function onDelete() {
         let confirmed = confirm(`Are you sure you want to delete "${quizData.title}"?`);
         if (confirmed) { 
-            deleteQuiz(quizId);
-            context.pageContent.redirect('/browser');
+            try {
+                
+                await deleteSolutionByQuizId(quizId);
+                await deleteQuestionsByQuizId(quizId);
+                await deleteQuiz(quizId);
+                context.pageContent.redirect('/browser');
+
+            } catch (error) { alert(error.message); }
         }
     }
 }

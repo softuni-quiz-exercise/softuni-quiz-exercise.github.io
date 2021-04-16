@@ -122,6 +122,19 @@ export async function deleteQuiz(quizId) {
     return await api.deleteRequest(endpoints.quizCollection + '/' + quizId);
 }
 
+export async function deleteSolution(solutionId) {
+    return await api.deleteRequest(endpoints.solutionCollection + '/' + solutionId);
+}
+
+export async function deleteSolutionByQuizId(quizId) {
+    const solutions = await api.getData(endpoints.solutionCollection + `?where={"quiz": "${quizId}"}`);
+    if (solutions) solutions['results'].forEach(solution => deleteSolution(solution.objectId));
+}
+export async function deleteQuestionsByQuizId(quizId) {
+    const questions = await api.getData(endpoints.questionCollection + `?where={"quiz": "${quizId}"}`);
+    if (questions) questions['results'].forEach(questions => deleteQuestion(questions.objectId));
+}
+
 export async function createQuestion(body) {
     body['owner'] = addPointer('_User', sessionStorage.userId);
     return await api.postData(endpoints.questionCollection, body);

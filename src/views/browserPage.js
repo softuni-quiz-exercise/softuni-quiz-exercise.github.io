@@ -46,7 +46,7 @@ export function showBrowserPage(context) {
             for (let i = 0; i < quizesData.length; i++) { quizesData[i] = await attachTakenTimes(quizesData[i]); }
             renderInHolder(quizesData.map((data) => quizTemplate(data.data, data.takenTimes)));
 
-        } catch (error) { renderInHolder('No quizes found!'); }
+        } catch (error) { renderInHolder('No quizes found! Be the first to add one!'); }
 
     }
 

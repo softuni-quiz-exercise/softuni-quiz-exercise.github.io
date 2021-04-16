@@ -125,7 +125,7 @@ export const questionTemplate = ({ preview=true, questionData, questionIndex }) 
             toggleLoadingElem(true);
             toggleAllInputs();
             let response;
-            if (questionId) response = await updateQuestion(questionId, { text: tempQuestionText, answers: tempAnswerArray, correctIndex: tempCorrectIndex });
+            if (questionData.objectId) response = await updateQuestion(questionData.objectId, { text: tempQuestionText, answers: tempAnswerArray, correctIndex: tempCorrectIndex });
             else { 
                 response = await createQuestion({ text: tempQuestionText, answers: tempAnswerArray, correctIndex: tempCorrectIndex, quiz: questionData.quiz })
                 await updateQuizQuestionsCount(true);
