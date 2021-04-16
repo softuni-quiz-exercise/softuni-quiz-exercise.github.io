@@ -81,9 +81,7 @@ export async function getQuestsionByQuizId(quizId) {
 
 export async function getQuizesByUserId(ownerId) {
     // 'where={"post":{"__type":"Pointer","className":"Post","objectId":"<OBJECT_ID>"}}'
-    // let url = endpoints.questionCollection + `?where=` + encodeURIComponent(`{"quiz": ${addPointer('Quiz', quizId)}`);
 
-    // let url = endpoints.quizCollection + `?where={"owner": {"__type":"Pointer","className":"_User","objectId":${ownerId}}}`;
     let url = endpoints.quizCollection + `?where={"owner": ${JSON.stringify(addPointer("_User", ownerId))}}`;
     return (await api.getData(url))['results'];
 }
@@ -104,6 +102,7 @@ export async function getAllQuizes() {
 
 export async function getQuizesFromSearch(title, topic) {
     // 'where={"title": "My post title", "likes": { "$gt": 100 }}'
+    
     let url = endpoints.quizCollection;
     if (topic == 'all' && title) url += `?where={"title": "${title}"}`;
     else if (title) url += `?where={"title": "${title}", "topic": "${topic}"}`;

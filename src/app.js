@@ -17,24 +17,23 @@ import { showProfilePage } from './views/profilePage.js';
 const main = document.getElementById('content');
 const nav = document.querySelector('nav');
 nav.querySelector('#logoutBtn').addEventListener('click', onLogout);
-// nav.querySelector('#profileBtn').href = '/profile/' + sessionStorage.userId;
 
 /* Router Set-Up */
 page.redirect('/', '/home');
 
-page('/home', decorateContext, showHomePage);
-page('/login', decorateContext, showLoginPage);
-page('/register', decorateContext, showRegisterPage);
-page('/create', decorateContext, showCreatorPage);
-page('/editor/:id', decorateContext, showEditorPage);
-page('/browser', decorateContext, showBrowserPage);
-page('/details/:id', decorateContext, showDetailsPage);
-page('/contest/:id', decorateContext, showContestPage);
-page('/summory/:id', decorateContext, showSummoryPage);
-page('/profile/:id', decorateContext, showProfilePage);
+page('*', decorateContext)
+page('/home', showHomePage);
+page('/login', showLoginPage);
+page('/register', showRegisterPage);
+page('/create', showCreatorPage);
+page('/editor/:id', showEditorPage);
+page('/browser', showBrowserPage);
+page('/details/:id', showDetailsPage);
+page('/contest/:id', showContestPage);
+page('/summory/:id', showSummoryPage);
+page('/profile/:id', showProfilePage);
 
 page.start();
-
 
 function decorateContext(context, next) {
     context.renderContent = content => render(content, main);
@@ -42,7 +41,6 @@ function decorateContext(context, next) {
     setNavButtons();
     next();
 }
-
 
 function setNavButtons() {
     let isLogged = sessionStorage.authToken;

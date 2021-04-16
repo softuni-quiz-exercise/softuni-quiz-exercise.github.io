@@ -7,11 +7,12 @@ export async function authenticate(body, isRegistering=true) {
     let errorMessage = (isRegistering) ? 'You have already registered!' : 'You haven\'t registered yet!';
 
     try {
+
         let response = await responseFunc(body);
         sessionStorage.authToken = response.sessionToken;
         sessionStorage.userId = response.objectId;
         document.querySelector('#profileBtn').href = '/profile/' + sessionStorage.userId;
-
+    
     } catch(error) {
         throw new Error(errorMessage);
     }
