@@ -160,7 +160,7 @@ export async function showContestPage(context) {
         
         const solutionContent = { 
             quiz: quizId,
-            owner: sessionStorage.userId,
+            owner: (sessionStorage.userId) ? sessionStorage.userId : 'anonymous',
             correctCount,
             answers
         };
