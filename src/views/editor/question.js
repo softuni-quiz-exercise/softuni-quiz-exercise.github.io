@@ -1,6 +1,8 @@
 import { html, render, elemCreator } from '../../lib.js';
+
 import { answerTemplate } from './answer.js';
 import { deleteQuestion, updateQuestion, createQuestion, updateQuiz, getQuizById } from '../../api/data.js';
+import { setModal } from '../components/modalDialog.js';
 
 
 export const questionTemplate = ({ preview=true, questionData, questionIndex }) => {
@@ -80,19 +82,22 @@ export const questionTemplate = ({ preview=true, questionData, questionIndex }) 
         changeView(true);
     }
 
-    async function onDelete() {
-        let confirmed = confirm(`Are you sure you want to delete "${questionData.text}"?`);
-        if (confirmed) {
-            try {
+    function onDelete() {
+        setModal(`Are you sure you want to delete "${questionData.text}"?`, deleteCurQuestion);
 
-                toggleLoadingElem();
-                const result = await deleteQuestion(questionData.objectId);
-                if (!result) throw Error();
-                questionHolder.remove();
-                await updateQuizQuestionsCount(false);
-                
-            } catch (error) { alert('You do not have permission to delete this question.') }
-            finally { toggleLoadingElem(); }
+        async function deleteCurQuestion(confirmed) {
+            if (confirmed) {
+                try {
+                    
+                    toggleLoadingElem();
+                    const result = await deleteQuestion(questionData.objectId);
+                    if (!result) throw Error();
+                    questionHolder.remove();
+                    await updateQuizQuestionsCount(false);
+                    
+                } catch (error) { alert('You do not have permission to delete this question.') }
+                finally { toggleLoadingElem(); }
+            }
         }
     }
 
