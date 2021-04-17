@@ -14,8 +14,6 @@ export function setModal(message, action) {
     
     showModal(message);
     
-    // holder.addEventListener('click', onClick);
-    
     function onClick(event) {
         const target = event.target;
         if (target.tagName != 'A') { return; }

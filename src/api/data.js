@@ -95,7 +95,6 @@ export async function getTheLastQuiz() {
 }
 
 export async function getAllQuizes() {
-
     const quizes = (await api.getData(endpoints.quizCollection))['results'].reverse();
     return await quizes;
 }

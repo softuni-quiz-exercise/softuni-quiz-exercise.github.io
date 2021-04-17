@@ -1,6 +1,6 @@
-import { html } from '../lib.js';
+import { html, topicConvert } from '../lib.js';
 
-import { getQuizById, getOwnerById, deleteQuiz, getQuizTakenTimesById, deleteQuestionsByQuizId, deleteSolutionByQuizId } from '../api/data.js';
+import { getQuizById, getOwnerById, deleteQuiz, getQuizTakenTimesById } from '../api/data.js';
 import loadingBlock from './components/loadingBlock.js';
 import { setModal } from './components/modalDialog.js';
 
@@ -12,7 +12,7 @@ const detailsPageTemplate = ({quizData, ownerData, onDelete, takenTimes}) => htm
     <div class="pad-large alt-page">
         <article class="details">
             <h1>${quizData.title}</h1>
-            <span class="quiz-topic">A quiz by <a href=${`/profile/` + ownerData.objectId}>${ownerData.username}</a> on the topic of ${quizData.topic}</span>
+            <span class="quiz-topic">A quiz by <a href=${`/profile/` + ownerData.objectId}>${ownerData.username}</a> on the topic of ${topicConvert[quizData.topic]}</span>
             <div class="quiz-meta">
                 <span>${quizData.questionCount} Questions</span>
                 <span>|</span>

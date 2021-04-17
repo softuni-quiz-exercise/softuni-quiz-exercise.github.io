@@ -4,20 +4,21 @@ import { getAllQuizes, getQuizesFromSearch, getQuizTakenTimesById } from '../api
 import quizTemplate from './components/quizTemplate.js';
 import loadingBlock from './components/loadingBlock.js';
 
-const quizHolder = elemCreator('div', { className: 'pad-large alt-page' });
+const quizHolder = elemCreator('div', { id: "quizHolder", className: "pad-large alt-page" });
 const loadingElem = loadingBlock();
+let maxShownQuizes = 0;  // index
+let totalQuizesCount = 0;
 
-
-const browserPageTemplate = (onSearch) => html`
+const browserPageTemplate = ({ onSearch, title, topic }) => html`
 <section id="browse">
     <header class="pad-large">
         <form class="browse-filter" @submit=${onSearch}>
-            <input class="input" type="text" name="query">
+            <input class="input" type="text" name="query" value=${(title) ? 'title' : ''} placeholder="Search for a quiz...">
             <select class="input" name="topic">
-                <option value="all">All Categories</option>
-                <option value="it">Languages</option>
-                <option value="hardware">Hardware</option>
-                <option value="software">Tools and Software</option>
+                <option value="all" .selected=${topic == "all"}>All Categories</option>
+                <option value="it" .selected=${topic == "it"}>Languages</option>
+                <option value="hardware" .selected=${topic == "hardware"}>Hardware</option>
+                <option value="software" .selected=${topic == "software"}>Tools and Software</option>
             </select>
             <input class="input submit action" type="submit" value="Filter Quizes">
         </form>
@@ -27,26 +28,55 @@ const browserPageTemplate = (onSearch) => html`
     <!-- quizes holder -->
     ${quizHolder}
 
+    <!-- scroller loading elem -->
+    <div class="loading">
+	    <div class="ball"></div>
+	    <div class="ball"></div>
+	    <div class="ball"></div>
+    </div>
+
 </section>`;
 
 
-export function showBrowserPage(context) {
+export async function showBrowserPage(context) {
     let [title, topic] = context.querystring.split('&').map(elem => elem.split('=')[1]);
+
+    let scrollerLoading;
+    maxShownQuizes = 4;  // -> starting with 5 elements
+    setEndlessScroller();
+    
+    context.renderContent(loadingElem);
+    const quizesData = await takeData();
     renderBrowserPage();
 
     async function renderBrowserPage() {
-        context.renderContent(browserPageTemplate(onSearch));
-        const func = (topic) ? getQuizesFromSearch : getAllQuizes;
+        context.renderContent(browserPageTemplate({ onSearch, title, topic }));
         
         try {
 
-            renderInHolder(loadingElem);
+            renderInHolder(quizesData.map((data, index) => {
+                if (index <= maxShownQuizes) return quizTemplate(data.data, data.takenTimes);
+            }));
+
+            scrollerLoading = document.querySelector("div.loading");
+            (scrollerLoading.classList.contains("show")) ? scrollerLoading.classList.remove("show") : '';
+
+        } catch (error) { renderInHolder('No quizes found! Be the first to add one!'); }
+
+    }
+
+    async function takeData() {
+        const func = (topic) ? getQuizesFromSearch : getAllQuizes;
+        try {
+
             let quizesData = await func(title, topic);
             if (quizesData.length == 0) throw new Error('No matches found!');
             for (let i = 0; i < quizesData.length; i++) { quizesData[i] = await attachTakenTimes(quizesData[i]); }
-            renderInHolder(quizesData.map((data) => quizTemplate(data.data, data.takenTimes)));
+            
+            totalQuizesCount = quizesData.length;
+            return quizesData;
 
-        } catch (error) { renderInHolder('No quizes found! Be the first to add one!'); }
+        } catch(error) { renderInHolder('No quizes found! Be the first to add one!'); }
 
     }
 
@@ -70,5 +100,18 @@ export function showBrowserPage(context) {
     async function attachTakenTimes(data) {
         let takenTimes = await getQuizTakenTimesById(data.objectId);
         return { data: data, takenTimes };
+    }
+
+    function setEndlessScroller() {
+        window.onscroll = undefined;
+        window.addEventListener("scroll", () => { 
+            const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+            if (scrollTop + clientHeight >= scrollHeight && totalQuizesCount > maxShownQuizes) {
+                scrollerLoading.classList.add("show");
+                maxShownQuizes = (maxShownQuizes * 2) + 1;
+                setTimeout(renderBrowserPage, 1000);
+            }
+        });
     }
 }
