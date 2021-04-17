@@ -2,7 +2,7 @@ import { html, page, render, createEmptyArray, elemCreator } from '../lib.js';
 
 import { getQuizById, getQuestsionByQuizId, postSolution } from '../api/data.js';
 import loadingBlock from './components/loadingBlock.js';
-
+import { setModal } from './components/modalDialog.js';
 
 const loadingElem = loadingBlock();
 
@@ -54,8 +54,12 @@ const questionTemplate = (questionData, index, answere, onQuestionAnswer, questi
         }
 
         <a class="action" href="javascript:void(0)" @click=${() => {
-            let confirmed = confirm('Are you sure you want to restart this quiz?');
-            if (confirmed) page.redirect('/contest/' + quizId)
+            setModal('Are you sure you want to restart this quiz?', startOver);
+
+            function startOver(confirmed) {
+                if (!confirmed) return; 
+                page.redirect('/contest/' + quizId);
+            }
 
         }}><i class="fas fa-sync-alt"></i> Start over</a>
 
@@ -68,9 +72,7 @@ const questionTemplate = (questionData, index, answere, onQuestionAnswer, questi
             }
 
             <a class="action" href="javascript:void(0)" @click=${() => {
-                let confirmed = confirm(`You have answered ${questionsData.questionsCount - questionsData.questionsLeft} from ${questionsData.questionsCount} questions.\nDo you wish to submit you answers?`);
-                if (confirmed) onSubmit();
-
+                setModal(`You have answered ${questionsData.questionsCount - questionsData.questionsLeft} from ${questionsData.questionsCount} questions.\nDo you wish to submit you answers?`, onSubmit);
             }}>Submit answers</a>
         </div>
     </nav>

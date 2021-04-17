@@ -17,6 +17,7 @@ import { showProfilePage } from './views/profilePage.js';
 const main = document.getElementById('content');
 const nav = document.querySelector('nav');
 nav.querySelector('#logoutBtn').addEventListener('click', onLogout);
+document.querySelector('#profileBtn').addEventListener('click', goToProfile);
 
 /* Router Set-Up */
 page.redirect('/', '/home');
@@ -52,4 +53,8 @@ function onLogout() {
     logOutUser();
     sessionStorage.clear();
     page.redirect('/home');
+}
+
+function goToProfile() {
+    page.redirect('/profile/' + sessionStorage.userId);
 }

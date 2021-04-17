@@ -1,6 +1,7 @@
 import { html, monthConvert, topicConvert, page } from '../lib.js';
 import { getQuizesByUserId, getOwnerById, getQuizTakenTimesById, getSolutionsByUserId, getQuizById, deleteQuiz } from '../api/data.js';
 import loadingBlock from './components/loadingBlock.js';
+import { setModal } from './components/modalDialog.js';
 
 
 const loadingElem = loadingBlock();
@@ -131,13 +132,15 @@ export async function showProfilePage(context) {
     }
     
     async function onDelete(target, quizId) {
-        let confirmed = confirm(`Are you sure you want to delete this quiz?`);
-        if (confirmed) { 
+        setModal(`Are you sure you want to delete this quiz?`, deleteCurQuiz);
+
+        async function deleteCurQuiz(confirmed) {
+            if (!confirmed) return;
             try {
                 
                 await deleteQuiz(quizId);
                 target.remove();
-    
+                
             } catch (error) { alert(error.message); }
         }
     }

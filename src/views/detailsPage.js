@@ -2,6 +2,7 @@ import { html } from '../lib.js';
 
 import { getQuizById, getOwnerById, deleteQuiz, getQuizTakenTimesById, deleteQuestionsByQuizId, deleteSolutionByQuizId } from '../api/data.js';
 import loadingBlock from './components/loadingBlock.js';
+import { setModal } from './components/modalDialog.js';
 
 
 const loadingElem = loadingBlock();
@@ -60,9 +61,11 @@ export async function showDetailsPage(context) {
 
     function showLoading() { context.renderContent(loadingElem); }
     
-    async function onDelete() {
-        let confirmed = confirm(`Are you sure you want to delete "${quizData.title}"?`);
-        if (confirmed) { 
+    function onDelete() {
+        setModal(`Are you sure you want to delete "${quizData.title}"?`, deleteCurQuiz);
+        
+        async function deleteCurQuiz(confirmed) {
+            if (!confirmed) return;
             try {
                 
                 await deleteQuiz(quizId);
