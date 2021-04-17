@@ -19,20 +19,21 @@ const profilePageTemplate = ({ownerData, solutionsData, quizesData, onDelete}) =
                 <span class="profile-info">Username:</span>
                 ${ownerData.username}
             </p>
-            
-            <!-- <p>
-                <span class="profile-info">Email:</span>
-                ${ownerData.email}
-            </p>
-            -->
 
-            <h2>Your Quiz Results</h2>
-            <table class="quiz-results">
-                <!-- solutions holder -->
-                <tbody>
-                    ${solutionsData.map(solution => solutionTemplate(solution.date, solution.quizName, solution.quizId, solution.correctCount, solution.totalCount))}
-                </tbody>
-            </table>
+            ${
+                (ownerData.objectId == sessionStorage.userId)
+                ? html`
+                <h2>Your Quiz Results</h2>
+                <table class="quiz-results">
+                    <!-- solutions holder -->
+                    <tbody>
+                        ${solutionsData.map(solution => solutionTemplate(solution.date, solution.quizName, solution.id, solution.correctCount, solution.totalCount))}
+                    </tbody>
+                </table>
+                `
+                : ``
+            }
+
         </article>
     </div>
 
@@ -48,10 +49,10 @@ const profilePageTemplate = ({ownerData, solutionsData, quizesData, onDelete}) =
 </section>`;
 
 
-const solutionTemplate = (date, quizName, quizId, correctCount, totalCount) => html`
+const solutionTemplate = (date, quizName, solutionId, correctCount, totalCount) => html`
 <tr class="results-row">
     <td class="cell-1">${date}</td>
-    <td class="cell-2"><a href=${"/details/" + quizId}>${quizName}</a></td>
+    <td class="cell-2"><a href=${"/summory/" + solutionId}>${quizName}</a></td>
     <td class="cell-3 s-correct">${Math.floor((correctCount / totalCount) * 100)}%</td>
     <td class="cell-4 s-correct">${correctCount}/${totalCount} correct answers</td>
 </tr>`;
@@ -118,14 +119,14 @@ export async function showProfilePage(context) {
         let dateData = solutionData.createdAt.split('T')[0].split('-');
         let date = `${dateData[2]}. ${monthConvert[dateData[1]]} ${dateData[0]}`;
         let quizName = quizData.title;
-        let quizId = quizData.objectId;
+        let id = solutionData.objectId;
         let correctCount = solutionData.correctCount;
         let totalCount = quizData.questionCount;
         
         return {
             date,
             quizName,
-            quizId,
+            id,
             correctCount,
             totalCount
         }

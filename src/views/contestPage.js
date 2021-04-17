@@ -156,7 +156,9 @@ export async function showContestPage(context) {
     }
 
 
-    async function onSubmit() {
+    async function onSubmit(confirmed) {
+        if (!confirmed) return;
+
         const answers = questionIndexes.map((answer, index) => ({ answer, 'correctIndex': questions[index].correctIndex}));
         let correctCount = answers.filter(elem => elem['answer'] === elem['correctIndex']).length;
         
@@ -173,6 +175,7 @@ export async function showContestPage(context) {
             context.pageContent('/summory/' + response.objectId);
 
         } catch (error) { alert(error.message); }
+
     }
 }
 

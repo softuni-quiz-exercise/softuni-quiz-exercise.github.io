@@ -143,10 +143,15 @@ export async function deleteSolutionByQuizId(quizId) {
     const solutions = await api.getData(endpoints.solutionCollection + `?where={"quiz": "${quizId}"}`);
     if (solutions) solutions['results'].forEach(solution => deleteSolution(solution.objectId));
 }
+
 export async function deleteQuestionsByQuizId(quizId) {
     const questions = await api.getData(endpoints.questionCollection + `?where={"quiz": "${quizId}"}`);
     if (questions) questions['results'].forEach(questions => deleteQuestion(questions.objectId));
 }
+
+// export async function deleteSummory(summoryId) {
+//     return await api.deleteRequest(endpoints.solutionCollection + '/' + summoryId);
+// }
 
 export async function createQuestion(body) {
     body['owner'] = addPointer('_User', sessionStorage.userId);
