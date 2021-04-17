@@ -14,6 +14,7 @@ const creatorTemplate = (onSubmit) => html`
     </header>
 
     <div id="titleSelector" class="pad-large alt-page">
+        <div id="errorBox" style="text-align:left;"></div>
         <form @submit=${onSubmit}>
             <label class="editor-label layout">
                 <span class="label-col">Title:</span>
@@ -27,7 +28,7 @@ const creatorTemplate = (onSubmit) => html`
                     <option value="software">Tools and Software</option>
                 </select>
             </label>
-            <input class="input submit action" type="submit" value="Save">
+            <input id="sendBtn" class="input submit action" type="submit" value="Save">
         </form>
     </div>
 
@@ -47,6 +48,7 @@ export function showCreatorPage(context) {
         let topic = formData.get('topic');
 
         try {
+            toggleDisableBtn();
             validate();
             toggleLoadingElem(true);
             toggleInputButton();
@@ -54,7 +56,10 @@ export function showCreatorPage(context) {
             const result = await createQuiz({ title, topic });
             context.pageContent.redirect('/editor/' + result.objectId);
 
-        } catch (error) { alert(error.message); }
+        } catch (error) { 
+            toggleDisableBtn();
+            document.getElementById('errorBox').textContent = error.message;
+         }
         finally { toggleLoadingElem(false); }
 
         // redirect to editor
@@ -70,5 +75,10 @@ export function showCreatorPage(context) {
     function toggleLoadingElem(show=true) {
         if (show) document.getElementById('titleSelector').appendChild(loadingElem);
         else loadingElem.remove();
+    }
+
+    function toggleDisableBtn() { 
+        const disabledBtn = document.getElementById('sendBtn');
+        disabledBtn.disabled = (disabledBtn.disabled) ? false : true; 
     }
 }

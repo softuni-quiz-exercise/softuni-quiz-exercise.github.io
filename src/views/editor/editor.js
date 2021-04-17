@@ -15,6 +15,7 @@ const editorTemplate = ({quizData, questionsData, addQuestion, onTitleSave}) => 
     </header>
 
     <div id="titleEditor" class="pad-large alt-page">
+        <div id="errorBox" style="text-align:left;"></div>
         <form @submit=${onTitleSave}>
             <label class="editor-label layout">
                 <span class="label-col">Title:</span>
@@ -80,14 +81,16 @@ export async function showEditorPage(context) {
         let topic = formData.get('topic');
 
         try {
-
-            validate();
+            
             toggleLoadingElem(true);
             toggleInputButton();
+            validate();
 
             await updateQuiz(quizId, { title, topic });
 
-        } catch (error) { alert(error.message); }
+        } catch (error) { 
+            document.getElementById('errorBox').textContent = error.message;
+         }
         finally { toggleInputButton(); toggleLoadingElem(false); }
 
         function validate() {

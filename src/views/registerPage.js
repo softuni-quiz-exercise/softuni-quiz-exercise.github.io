@@ -11,6 +11,7 @@ const registerPageTemplate = (onSubmit) => html`
             <a class="tab-item" href="/login">Login</a>
             <h1 class="tab-item active">Register</h1>
         </header>
+        <div id="errorBox"></div>
         <form class="pad-med centered" @submit=${onSubmit}>
             <label class="block centered">Username: <input class="auth-input input" type="text"
                     name="username" /></label>
@@ -20,7 +21,7 @@ const registerPageTemplate = (onSubmit) => html`
                     name="password" /></label>
             <label class="block centered">Repeat: <input class="auth-input input" type="password"
                     name="repass" /></label>
-            <input class="block action cta" type="submit" value="Create Account" />
+            <input id="sendBtn" class="block action cta" type="submit" value="Create Account" />
         </form>
         <footer class="tab-footer">
             Already have an account? <a class="invert" href="/login">Sign in here</a>.
@@ -45,17 +46,26 @@ export function showRegisterPage(context) {
         let rePass = formData.get('repass');
 
         try {
+            toggleDisableBtn();
             validation();
+
             await authenticate({ email, username, password }, true);
             context.pageContent('/home');
+
         } catch(error) {
-            alert(error.message);
+            toggleDisableBtn();
+            document.getElementById('errorBox').textContent = error.message;
         }
 
         function validation() {
             if (!username || !email || !password || !rePass) throw new Error('All fields are required!');
             if (!email.includes('@')) throw new Error('Email must be valid!');
             if (password != rePass) throw new Error('Both passwords must match!');
+        }
+
+        function toggleDisableBtn() { 
+            const disabledBtn = document.getElementById('sendBtn');
+            disabledBtn.disabled = (disabledBtn.disabled) ? false : true; 
         }
     } 
 }

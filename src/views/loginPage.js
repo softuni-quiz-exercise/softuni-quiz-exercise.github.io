@@ -11,12 +11,13 @@ const loginPageTemplate = (onSubmit) => html`
                 <h1 class="tab-item active">Login</h1>
                 <a class="tab-item" href="/register">Register</a>
             </header>
+            <div id="errorBox"></div>
             <form class="pad-med centered" @submit=${onSubmit}>
                 <label class="block centered">Username: <input class="auth-input input" type="text"
                         name="username" /></label>
                 <label class="block centered">Password: <input class="auth-input input" type="password"
                         name="password" /></label>
-                <input class="block action cta" type="submit" value="Sign In" />
+                <input id="sendBtn" class="block action cta" type="submit" value="Sign In" />
             </form>
             <footer class="tab-footer">
                 Don't have an account? <a class="invert" href="/register">Create one here</a>.
@@ -39,15 +40,23 @@ export function showLoginPage(context) {
         let password = formData.get('password');
 
         try {
+            toggleDisableBtn();
             validation();
+            
             await authenticate({ username, password }, false);
             context.pageContent('/home');
         } catch(error) {
-            alert(error.message);
+            toggleDisableBtn();
+            document.getElementById('errorBox').textContent = error.message;
         }
 
         function validation() {
             if (!username || !password) throw new Error('All fields are required!');
+        }
+
+        function toggleDisableBtn() { 
+            const disabledBtn = document.getElementById('sendBtn');
+            disabledBtn.disabled = (disabledBtn.disabled) ? false : true; 
         }
     }
 }
