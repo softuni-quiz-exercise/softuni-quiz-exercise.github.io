@@ -40,7 +40,7 @@ export async function loginUser(body, headers={ 'X-Parse-Revocable-Session': '1'
 }
 
 export async function logOutUser() {
-    return await api.postData(endpoints.logout);
+    return await api.postData(endpoints.logout, {});
 }
 
 
